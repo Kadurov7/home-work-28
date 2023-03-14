@@ -5,7 +5,6 @@ import {
     addToBasketReq,
     deleteBasketItemReq,
 } from '../../api/basketService'
-import fetchAPI from '../../lib/fetchApi'
 
 export const getBasket = createAsyncThunk(
     'basket/getBasket',
@@ -58,17 +57,17 @@ export const deleteBasketItem = createAsyncThunk(
     }
 )
 
-export const submitOrder = createAsyncThunk(
-    'basket/submitOrder',
-    async ({ orderData }, { dispatch, rejectWithValue }) => {
-        try {
-            await fetchAPI(`https://jsonplaceholder.typicode.com/postssad`, {
-                method: 'POST',
-                body: orderData,
-            })
-            return dispatch(getBasket())
-        } catch (error) {
-            return rejectWithValue('Something went wrong')
-        }
-    }
-)
+// export const submitOrder = createAsyncThunk(
+//     'basket/submitOrder',
+//     async ({ orderData }, { dispatch, rejectWithValue }) => {
+//         try {
+//             await fetchAPI(`https://jsonplaceholder.typicode.com/postssad`, {
+//                 method: 'POST',
+//                 body: orderData,
+//             })
+//             return dispatch(getBasket())
+//         } catch (error) {
+//             return rejectWithValue('Something went wrong')
+//         }
+//     }
+// )

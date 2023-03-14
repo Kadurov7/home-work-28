@@ -2,12 +2,14 @@ import { styled } from '@mui/material'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { Link, useNavigate } from 'react-router-dom'
+import { signOut } from '../../store/auth/auth.thunk'
 import { getBasket } from '../../store/basket/basketThunk'
+import { withAuthModal } from '../hoc/withAuthModal'
 import { uiActions } from '../../store/UI/ui.slice'
 import Button from '../UI/Button'
 import BusketButton from './BusketButton'
 
-const Header = ({ onShowBasket }) => {
+const Header = ({ onShowBasket, showAuthModal }) => {
     const navigate = useNavigate()
     const isAuthorized = useSelector((state) => state.auth.isAuthorized)
     const items = useSelector((state) => state.basket.items)
@@ -46,25 +48,41 @@ const Header = ({ onShowBasket }) => {
     }
 
     const signOutHandler = () => {
-        navigate('/signin')
+        navigate(signOut())
     }
 
     const signInHandler = () => {
         navigate('/signin')
     }
 
+    const showBasketHandler = () => {
+        if (!isAuthorized) {
+            return showAuthModal(true)
+        }
+        return onShowBasket()
+    }
+
+    const orderHandler = () => {
+        if (!isAuthorized) {
+            return showAuthModal(true)
+        }
+
+        return navigate('/myOrder')
+    }
+
     return (
         <Container>
-            <Logo to="/">ReactMeals</Logo>
+            <Logo onClick={navigate('/')}>ReactMeals</Logo>
             <BusketButton
                 className={animationClass}
-                onClick={onShowBasket}
+                onClick={showBasketHandler}
                 count={calculateTotalAmount()}
             />
+            <Button onClick={orderHandler}>My Orders</Button>
             <Button onClick={themeChangeHandler}>
                 {themeMode === 'light' ? ' Dark mode' : 'light mode'}
             </Button>
-            {isAuthorized ? (
+            {!isAuthorized ? (
                 <Button onClick={signOutHandler}>Sign Out</Button>
             ) : (
                 <Button onClick={signInHandler}>Sign In</Button>
@@ -73,7 +91,7 @@ const Header = ({ onShowBasket }) => {
     )
 }
 
-export default Header
+export default withAuthModal(Header)
 
 const Container = styled('header')(({ theme }) => ({
     position: 'fixed',
